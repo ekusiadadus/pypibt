@@ -25,17 +25,17 @@ You can also use and extend this repo, for example, applying to new problems, en
 
 ## setup
 
-This repository is easily setup with [Poetry](https://python-poetry.org/).
+This repository is easily setup with [uv](https://docs.astral.sh/uv/).
 After cloning this repo, run the following to complete the setup.
 
 ```sh
-poetry install
+uv sync
 ```
 
 ## demo
 
 ```sh
-poetry run python app.py -m assets/random-32-32-10.map -i assets/random-32-32-10-random-1.scen -N 200
+uv run python app.py -m assets/random-32-32-10.map -i assets/random-32-32-10-random-1.scen -N 200
 ```
 
 The result will be saved in `output.txt`
@@ -57,7 +57,7 @@ Jupyter Lab is also available.
 Use the following command:
 
 ```sh
-poetry run jupyter lab
+uv run jupyter lab
 ```
 
 You can see an example in `notebooks/demo.ipynb`.
