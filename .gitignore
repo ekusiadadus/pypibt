@@ -190,3 +190,7 @@ pyrightconfig.json
 **/.DS_Store
 **/.virtual_documents/
 output.txt
+
+# Claude Code specific files
+.mcp.json
+CLAUDE.md
