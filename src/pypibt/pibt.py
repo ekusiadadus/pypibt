@@ -20,6 +20,10 @@ class PIBT:
         enable_anytime: bool = False,
         anytime_time_limit_ms: float = 100.0,
         anytime_beam_width: int = 5,
+        enable_lns: bool = False,
+        lns_iterations: int = 10,
+        lns_destroy_size: int = 10,
+        lns_destroy_strategy: str = "adaptive",
     ):
         self.grid = grid
         self.starts = starts
@@ -54,6 +58,12 @@ class PIBT:
         self.enable_anytime = enable_anytime
         self.anytime_time_limit_ms = anytime_time_limit_ms
         self.anytime_beam_width = anytime_beam_width
+
+        # LNS parameters (2025 optimization)
+        self.enable_lns = enable_lns
+        self.lns_iterations = lns_iterations
+        self.lns_destroy_size = lns_destroy_size
+        self.lns_destroy_strategy = lns_destroy_strategy
 
     def compute_hindrance(self, v: Coord, Q_from: Config, current_agent: int) -> float:
         """
@@ -225,8 +235,11 @@ class PIBT:
         - Standard PIBT
         - Regret Learning (iterative execution)
         - Anytime PIBT (continuous improvement within time limit)
+        - LNS (Large Neighborhood Search for conflict resolution)
         """
-        if self.enable_anytime:
+        if self.enable_lns:
+            return self._run_with_lns(max_timestep)
+        elif self.enable_anytime:
             return self._run_anytime(max_timestep)
         elif self.enable_regret_learning:
             return self._run_with_regret_learning(max_timestep)
@@ -452,3 +465,301 @@ class PIBT:
                 break
 
         return configs
+
+    # ========================================================================
+    # LNS (Large Neighborhood Search) Implementation (2025 Optimization)
+    # ========================================================================
+
+    def _detect_vertex_conflicts(self, configs: Configs) -> set[tuple[int, int, int]]:
+        """
+        Detect vertex conflicts in a solution.
+
+        Returns set of (timestep, agent_i, agent_j) tuples where agents occupy same vertex.
+        """
+        conflicts = set()
+        for t in range(len(configs)):
+            Q = configs[t]
+            # Check for vertex collisions
+            position_map: dict[Coord, list[int]] = {}
+            for i, pos in enumerate(Q):
+                if pos not in position_map:
+                    position_map[pos] = []
+                position_map[pos].append(i)
+
+            # Record conflicts
+            for pos, agents in position_map.items():
+                if len(agents) > 1:
+                    # All pairs of agents at same position
+                    for i in range(len(agents)):
+                        for j in range(i + 1, len(agents)):
+                            conflicts.add((t, agents[i], agents[j]))
+
+        return conflicts
+
+    def _detect_edge_conflicts(self, configs: Configs) -> set[tuple[int, int, int]]:
+        """
+        Detect edge conflicts (swapping) in a solution.
+
+        Returns set of (timestep, agent_i, agent_j) tuples where agents swap positions.
+        """
+        conflicts = set()
+        for t in range(len(configs) - 1):
+            Q_from = configs[t]
+            Q_to = configs[t + 1]
+
+            for i in range(self.N):
+                for j in range(i + 1, self.N):
+                    # Check if agents i and j swap positions
+                    if Q_from[i] == Q_to[j] and Q_from[j] == Q_to[i]:
+                        conflicts.add((t, i, j))
+
+        return conflicts
+
+    def _count_conflicts(self, configs: Configs) -> int:
+        """Count total number of conflicts (vertex + edge) in a solution."""
+        vertex_conflicts = self._detect_vertex_conflicts(configs)
+        edge_conflicts = self._detect_edge_conflicts(configs)
+        return len(vertex_conflicts) + len(edge_conflicts)
+
+    def _get_conflict_agents(self, configs: Configs) -> set[int]:
+        """Get set of all agents involved in any conflict."""
+        vertex_conflicts = self._detect_vertex_conflicts(configs)
+        edge_conflicts = self._detect_edge_conflicts(configs)
+
+        conflict_agents = set()
+        for _, i, j in vertex_conflicts:
+            conflict_agents.add(i)
+            conflict_agents.add(j)
+        for _, i, j in edge_conflicts:
+            conflict_agents.add(i)
+            conflict_agents.add(j)
+
+        return conflict_agents
+
+    def _destroy_random(self, configs: Configs, destroy_size: int) -> set[int]:
+        """
+        Random destroy heuristic: randomly select agents to replan.
+
+        Args:
+            configs: Current solution
+            destroy_size: Number of agents to destroy
+
+        Returns:
+            Set of agent indices to replan
+        """
+        conflict_agents = self._get_conflict_agents(configs)
+
+        if len(conflict_agents) == 0:
+            return set()
+
+        # Select random subset of conflict agents
+        destroy_count = min(destroy_size, len(conflict_agents))
+        destroyed = set(self.rng.choice(list(conflict_agents), destroy_count, replace=False))
+
+        return destroyed
+
+    def _destroy_conflict_based(self, configs: Configs, destroy_size: int) -> set[int]:
+        """
+        Conflict-based destroy heuristic: select agents with most conflicts.
+
+        Prioritizes agents involved in many conflicts for replanning.
+        """
+        vertex_conflicts = self._detect_vertex_conflicts(configs)
+        edge_conflicts = self._detect_edge_conflicts(configs)
+
+        # Count conflicts per agent
+        conflict_count: dict[int, int] = {}
+        for _, i, j in vertex_conflicts:
+            conflict_count[i] = conflict_count.get(i, 0) + 1
+            conflict_count[j] = conflict_count.get(j, 0) + 1
+        for _, i, j in edge_conflicts:
+            conflict_count[i] = conflict_count.get(i, 0) + 1
+            conflict_count[j] = conflict_count.get(j, 0) + 1
+
+        if len(conflict_count) == 0:
+            return set()
+
+        # Sort agents by conflict count (descending)
+        sorted_agents = sorted(conflict_count.items(), key=lambda x: x[1], reverse=True)
+
+        # Select top destroy_size agents
+        destroy_count = min(destroy_size, len(sorted_agents))
+        destroyed = set(agent for agent, _ in sorted_agents[:destroy_count])
+
+        return destroyed
+
+    def _destroy_adaptive(
+        self, configs: Configs, destroy_size: int, iteration: int
+    ) -> set[int]:
+        """
+        Adaptive destroy heuristic: dynamically choose between strategies.
+
+        Uses weighted random selection between different heuristics,
+        adapting weights based on iteration number.
+        """
+        # Adaptive strategy selection based on iteration
+        if iteration % 3 == 0:
+            # Random exploration
+            return self._destroy_random(configs, destroy_size)
+        elif iteration % 3 == 1:
+            # Conflict-based intensification
+            return self._destroy_conflict_based(configs, destroy_size)
+        else:
+            # Mixed: conflict-based + random expansion
+            conflict_agents = self._destroy_conflict_based(configs, destroy_size // 2)
+            all_conflict_agents = self._get_conflict_agents(configs)
+            remaining = all_conflict_agents - conflict_agents
+
+            if len(remaining) > 0:
+                additional_count = min(destroy_size - len(conflict_agents), len(remaining))
+                additional = set(
+                    self.rng.choice(list(remaining), additional_count, replace=False)
+                )
+                return conflict_agents | additional
+            else:
+                return conflict_agents
+
+    def _repair_paths(
+        self, original_configs: Configs, destroyed_agents: set[int], max_timestep: int
+    ) -> Configs:
+        """
+        Repair paths for destroyed agents using PIBT.
+
+        Args:
+            original_configs: Original solution
+            destroyed_agents: Set of agent indices to replan
+            max_timestep: Maximum timesteps for repair
+
+        Returns:
+            New configs with repaired paths
+        """
+        if len(destroyed_agents) == 0:
+            return original_configs
+
+        # Create a sub-problem with only destroyed agents
+        destroyed_list = sorted(list(destroyed_agents))
+
+        # Extract starts from original_configs[0] for destroyed agents
+        sub_starts = [self.starts[i] for i in destroyed_list]
+        sub_goals = [self.goals[i] for i in destroyed_list]
+
+        # Create temporary PIBT instance for repair (reuse same grid and parameters)
+        repair_pibt = PIBT(
+            self.grid,
+            sub_starts,
+            sub_goals,
+            seed=self.rng.integers(0, 100000),
+            enable_hindrance=self.enable_hindrance,
+            hindrance_weight=self.hindrance_weight,
+            priority_increment=self.priority_increment,
+            enable_regret_learning=False,  # Disable for repair (faster)
+            enable_anytime=False,
+            enable_lns=False,
+        )
+
+        # Run PIBT for sub-problem
+        sub_configs = repair_pibt._run_single(max_timestep)
+
+        # Merge sub_configs back into original_configs
+        # Strategy: Replace paths of destroyed agents while keeping others
+        max_len = max(len(original_configs), len(sub_configs))
+        merged_configs = []
+
+        for t in range(max_len):
+            if t < len(original_configs):
+                Q = list(original_configs[t])  # Copy original config
+            else:
+                # Extend: agents stay at their last positions
+                Q = list(original_configs[-1])
+
+            # Update positions of destroyed agents
+            if t < len(sub_configs):
+                for idx, agent_id in enumerate(destroyed_list):
+                    Q[agent_id] = sub_configs[t][idx]
+
+            merged_configs.append(tuple(Q))
+
+        return merged_configs
+
+    def _run_with_lns(self, max_timestep: int) -> Configs:
+        """
+        Run PIBT with Large Neighborhood Search (LNS).
+
+        Based on MAPF-LNS2 (AAAI 2022) and LNS2+RL (2024-2025 research).
+
+        Algorithm:
+        1. Generate initial solution with PIBT
+        2. Iteratively destroy and repair:
+           a. Destroy: Select subset of conflicting agents
+           b. Repair: Replan paths using PIBT
+        3. Accept improved solutions
+        4. Repeat until no conflicts or iteration limit
+
+        Returns:
+            Conflict-free or improved solution
+        """
+        # Step 1: Generate initial solution
+        initial_configs = self._run_single(max_timestep)
+        best_configs = initial_configs
+        best_cost = len(best_configs)
+        best_conflicts = self._count_conflicts(best_configs)
+
+        print(f"LNS: Initial solution = {best_cost} steps, {best_conflicts} conflicts")
+
+        if best_conflicts == 0:
+            print("LNS: Initial solution is conflict-free!")
+            return best_configs
+
+        # Step 2: LNS iterations
+        for iteration in range(self.lns_iterations):
+            # Destroy: Select agents to replan
+            if self.lns_destroy_strategy == "random":
+                destroyed_agents = self._destroy_random(best_configs, self.lns_destroy_size)
+            elif self.lns_destroy_strategy == "conflict":
+                destroyed_agents = self._destroy_conflict_based(
+                    best_configs, self.lns_destroy_size
+                )
+            else:  # adaptive
+                destroyed_agents = self._destroy_adaptive(
+                    best_configs, self.lns_destroy_size, iteration
+                )
+
+            if len(destroyed_agents) == 0:
+                print(f"LNS: No agents to destroy at iteration {iteration + 1}")
+                break
+
+            # Repair: Replan paths for destroyed agents
+            repaired_configs = self._repair_paths(
+                best_configs, destroyed_agents, max_timestep
+            )
+
+            # Evaluate repaired solution
+            repaired_cost = len(repaired_configs)
+            repaired_conflicts = self._count_conflicts(repaired_configs)
+
+            # Accept if improved (fewer conflicts or same conflicts but shorter)
+            improved = False
+            if repaired_conflicts < best_conflicts:
+                improved = True
+            elif repaired_conflicts == best_conflicts and repaired_cost < best_cost:
+                improved = True
+
+            if improved:
+                best_configs = repaired_configs
+                best_cost = repaired_cost
+                best_conflicts = repaired_conflicts
+                print(
+                    f"LNS: Iteration {iteration + 1}: Improved to {best_cost} steps, "
+                    f"{best_conflicts} conflicts (destroyed {len(destroyed_agents)} agents)"
+                )
+
+            # Early termination if conflict-free
+            if best_conflicts == 0:
+                print(f"LNS: Found conflict-free solution at iteration {iteration + 1}!")
+                break
+
+        print(
+            f"LNS: Completed {min(iteration + 1, self.lns_iterations)} iterations. "
+            f"Final: {best_cost} steps, {best_conflicts} conflicts"
+        )
+        return best_configs

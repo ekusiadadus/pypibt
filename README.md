@@ -97,24 +97,31 @@ print(f"Solution: {len(plan)} timesteps")
 
 ### Features
 
-1. **Anytime PIBT** (2025 Research) ⭐ NEW
+1. **Anytime PIBT** (2025 Research)
    - Beam search over priority orderings
    - Continuous improvement within time budget
    - **+14.3% improvement** on 100 agents (63→54 steps)
    - Best for: small-medium agent counts with flexible computation time
 
-2. **Hindrance Term** (2025 Research)
+2. **LNS (Large Neighborhood Search)** (2025 Research) ⭐ NEW
+   - Iterative destroy-and-repair refinement
+   - Three strategies: random, conflict-based, adaptive
+   - **+7.89% improvement** with 400 agents (when combined with Hindrance)
+   - Based on MAPF-LNS2 (AAAI 2022) and LNS2+RL (2024-2025)
+   - Best for: combining with other optimizations for iterative refinement
+
+3. **Hindrance Term** (2025 Research)
    - Evaluates agent interference to avoid blocking
    - O(Δ) complexity, maintains scalability
    - Best for high-density scenarios (300+ agents)
 
-3. **Regret Learning** (2025 Research)
+4. **Regret Learning** (2025 Research)
    - Learns from multiple PIBT executions
    - Builds regret table from conflict patterns
    - **+19.7% improvement** with 400 agents
    - Best synergy with Hindrance Term
 
-4. **Hyperparameter Optimization**
+5. **Hyperparameter Optimization**
    - Optuna integration for automatic tuning
    - Environment-specific parameter adaptation
 
