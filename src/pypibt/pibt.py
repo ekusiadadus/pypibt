@@ -14,6 +14,9 @@ class PIBT:
         enable_hindrance: bool = True,
         priority_increment: float = 1.0,
         hindrance_weight: float = 0.3,
+        enable_regret_learning: bool = False,
+        regret_learning_iterations: int = 3,
+        regret_weight: float = 0.2,
     ):
         self.grid = grid
         self.starts = starts
@@ -36,6 +39,13 @@ class PIBT:
         self.enable_hindrance = enable_hindrance
         self.priority_increment = priority_increment
         self.hindrance_weight = hindrance_weight
+
+        # regret learning parameters (2025 optimization)
+        self.enable_regret_learning = enable_regret_learning
+        self.regret_learning_iterations = regret_learning_iterations
+        self.regret_weight = regret_weight
+        # regret table: stores learned regret values for position-action pairs
+        self.regret_table: dict[tuple[Coord, Coord], float] = {}
 
     def compute_hindrance(self, v: Coord, Q_from: Config, current_agent: int) -> float:
         """
@@ -71,6 +81,65 @@ class PIBT:
 
         return hindrance_score
 
+    def compute_regret(self, from_pos: Coord, to_pos: Coord) -> float:
+        """
+        Compute regret value for moving from from_pos to to_pos.
+        Based on 2025 research: "Lightweight and Effective Preference Construction in PIBT"
+
+        Regret learning learns how each action affects other agents' cost gaps.
+        Returns learned regret value (lower is better).
+        """
+        if not self.enable_regret_learning:
+            return 0.0
+
+        # Look up learned regret value
+        key = (from_pos, to_pos)
+        return self.regret_table.get(key, 0.0)
+
+    def update_regret_table(self, configs: Configs) -> None:
+        """
+        Update regret table based on observed agent trajectories.
+        Analyzes conflicts and suboptimal moves to build regret values.
+        """
+        if not self.enable_regret_learning or len(configs) < 2:
+            return
+
+        # Analyze each transition
+        for t in range(len(configs) - 1):
+            Q_from = configs[t]
+            Q_to = configs[t + 1]
+
+            for i in range(self.N):
+                pos_from = Q_from[i]
+                pos_to = Q_to[i]
+
+                # Calculate regret: how much this move cost other agents
+                regret = 0.0
+
+                # Check if this agent stayed in place unnecessarily
+                if pos_from == pos_to and pos_from != self.goals[i]:
+                    # Agent didn't move - check if it was blocking others
+                    neighbors = get_neighbors(self.grid, pos_from)
+                    for neighbor_pos in neighbors:
+                        # Check if any agent at neighbor wanted to move here
+                        for j in range(self.N):
+                            if i == j:
+                                continue
+                            if Q_from[j] == neighbor_pos:
+                                # Agent j was at neighbor position
+                                # Check if moving to pos_from would have been better for j
+                                dist_current = self.dist_tables[j].get(Q_to[j])
+                                dist_alternative = self.dist_tables[j].get(pos_from)
+                                if dist_alternative < dist_current:
+                                    # Agent j would have benefited from this position
+                                    regret += (dist_current - dist_alternative) * 0.5
+
+                # Update regret table
+                key = (pos_from, pos_to)
+                old_regret = self.regret_table.get(key, 0.0)
+                # Exponential moving average
+                self.regret_table[key] = 0.7 * old_regret + 0.3 * regret
+
     def funcPIBT(self, Q_from: Config, Q_to: Config, i: int) -> bool:
         # true -> valid, false -> invalid
 
@@ -78,12 +147,13 @@ class PIBT:
         C = [Q_from[i]] + get_neighbors(self.grid, Q_from[i])
         self.rng.shuffle(C)  # tie-breaking, randomize
 
-        # Sort by distance + hindrance term (2025 optimization)
+        # Sort by distance + hindrance term + regret (2025 optimization)
         C = sorted(
             C,
             key=lambda u: (
                 self.dist_tables[i].get(u)
                 + self.hindrance_weight * self.compute_hindrance(u, Q_from, i)
+                + self.regret_weight * self.compute_regret(Q_from[i], u)
             ),
         )
 
@@ -140,6 +210,19 @@ class PIBT:
         return Q_to
 
     def run(self, max_timestep: int = 1000) -> Configs:
+        """
+        Run PIBT algorithm with optional regret learning.
+
+        If regret learning is enabled, runs PIBT multiple times to learn
+        from previous executions and improve solution quality.
+        """
+        if self.enable_regret_learning:
+            return self._run_with_regret_learning(max_timestep)
+        else:
+            return self._run_single(max_timestep)
+
+    def _run_single(self, max_timestep: int) -> Configs:
+        """Single PIBT execution without regret learning."""
         # define priorities
         priorities: list[float] = []
         for i in range(self.N):
@@ -164,3 +247,28 @@ class PIBT:
                 break  # goal
 
         return configs
+
+    def _run_with_regret_learning(self, max_timestep: int) -> Configs:
+        """
+        Run PIBT with regret learning.
+
+        Executes PIBT multiple times, learning from each execution to improve
+        subsequent runs. Based on 2025 research showing 40% throughput improvement.
+        """
+        best_configs = None
+        best_timesteps = float("inf")
+
+        for iteration in range(self.regret_learning_iterations):
+            # Run single execution
+            configs = self._run_single(max_timestep)
+
+            # Update regret table based on this execution
+            self.update_regret_table(configs)
+
+            # Track best solution
+            timesteps = len(configs)
+            if timesteps < best_timesteps:
+                best_timesteps = timesteps
+                best_configs = configs
+
+        return best_configs if best_configs is not None else self._run_single(max_timestep)

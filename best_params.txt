@@ -1,0 +1,8 @@
+# Best PIBT hyperparameters found by Optuna
+# Baseline: 54 timesteps
+# Optimized: 54.0 timesteps
+# Improvement: 0.00%
+
+enable_hindrance = True
+hindrance_weight = 0.3119890406724053
+priority_increment = 0.5871254182522991
