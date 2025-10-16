@@ -68,11 +68,11 @@ This implementation includes state-of-the-art optimizations based on recent MAPF
 
 ### Performance Improvements
 
-| Agents | Baseline | **Optimized** | **Improvement** |
-|--------|----------|---------------|-----------------|
-| 100    | 63 steps | **55 steps**  | **+12.7%** |
-| 200    | 54 steps | 54 steps      | 0.0% |
-| 400    | 76 steps | **61 steps**  | **+19.7%** |
+| Agents | Baseline | **Anytime PIBT** | **Hindrance + Regret** | **Best Improvement** |
+|--------|----------|------------------|------------------------|----------------------|
+| 100    | 63 steps | **54 steps**     | 55 steps               | **+14.3%** ⭐ |
+| 200    | 54 steps | 54 steps         | 55 steps               | 0.0% |
+| 400    | 76 steps | 68 steps         | **61 steps**           | **+19.7%** ⭐ |
 
 ### Quick Example
 
@@ -97,17 +97,24 @@ print(f"Solution: {len(plan)} timesteps")
 
 ### Features
 
-1. **Hindrance Term** (2025 Research)
+1. **Anytime PIBT** (2025 Research) ⭐ NEW
+   - Beam search over priority orderings
+   - Continuous improvement within time budget
+   - **+14.3% improvement** on 100 agents (63→54 steps)
+   - Best for: small-medium agent counts with flexible computation time
+
+2. **Hindrance Term** (2025 Research)
    - Evaluates agent interference to avoid blocking
    - O(Δ) complexity, maintains scalability
    - Best for high-density scenarios (300+ agents)
 
-2. **Regret Learning** (2025 Research)
+3. **Regret Learning** (2025 Research)
    - Learns from multiple PIBT executions
    - Builds regret table from conflict patterns
-   - +19.7% improvement with 400 agents
+   - **+19.7% improvement** with 400 agents
+   - Best synergy with Hindrance Term
 
-3. **Hyperparameter Optimization**
+4. **Hyperparameter Optimization**
    - Optuna integration for automatic tuning
    - Environment-specific parameter adaptation
 

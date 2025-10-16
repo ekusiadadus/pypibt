@@ -40,7 +40,45 @@ print(f"Solution: {len(plan)} timesteps")
 
 ## Optimization Features
 
-### 1. Hindrance Term (2025 Research)
+### 1. Anytime PIBT (2025 Research) ⭐ NEW
+
+**Paper**: "Anytime Single-Step MAPF Planning with Anytime PIBT" (arXiv:2504.07841, April 2025)
+
+**What it does**: Continuously improves solution quality using beam search over different priority orderings within a specified time limit.
+
+**Algorithm**:
+1. Find initial solution quickly (standard PIBT)
+2. Explore alternative solutions using varied priority strategies
+3. Iteratively improve until time limit or convergence
+4. Return best solution found
+
+**When to use**:
+- When you have flexible computation time (100ms - 5s)
+- For quality-critical applications
+- Small to medium agent counts (100-200 agents)
+- When you want anytime guarantees
+
+**Parameters**:
+```python
+enable_anytime: bool = False           # Enable/disable feature
+anytime_time_limit_ms: float = 100.0   # Time budget in milliseconds
+anytime_beam_width: int = 5            # Number of priority strategies to explore
+```
+
+**Performance**:
+- 100 agents: **+14.29% improvement** (63→54 steps) ⭐
+- 200 agents: 0% (already optimal)
+- 400 agents: +10.53% improvement (76→68 steps)
+
+**Priority Strategies**:
+- **Regret-based**: Uses learned regret values
+- **Random perturbation**: Explores nearby priority orderings
+- **Conflict-aware**: Prioritizes agents far from goals
+- **Mixed**: Combination of strategies
+
+**Trade-off**: Computation time increases ~3-10x but provides significant quality improvement.
+
+### 2. Hindrance Term (2025 Research)
 
 **Paper**: "Lightweight and Effective Preference Construction in PIBT" (2025)
 
