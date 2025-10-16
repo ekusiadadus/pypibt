@@ -23,8 +23,8 @@ class DistTable:
         if not is_valid_coord(self.grid, target):
             return self.grid.size
 
-        # distance has been known
-        if self.table[target] < self.table.size:
+        # distance has been known (check if less than grid.size, the max distance marker)
+        if self.table[target] < self.grid.size:
             return self.table[target]
 
         # BFS with lazy evaluation

@@ -194,3 +194,10 @@ output.txt
 # Claude Code specific files
 .mcp.json
 CLAUDE.md
+
+# MAPF-GPT Training files
+data/*.pkl
+models/*.pth
+train_*.log
+pogema_test_*.log
+output*.txt
