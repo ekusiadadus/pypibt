@@ -165,7 +165,56 @@ regret_weight: float = 0.2              # Regret impact weight (0.0-1.0)
 
 **Trade-off**: Increases computation time by ~3x but significantly improves solution quality.
 
-### 5. Priority Increment Tuning
+### 5. Priority Learning (2025 Research) 🔬 EXPERIMENTAL
+
+**Approach**: Lightweight neural network learns optimal priorities through imitation learning
+
+**What it does**: Uses a trained neural network to predict agent priorities based on current state, instead of using simple distance-based priorities.
+
+**Algorithm**:
+1. Extract features: position, goal, distance, local density
+2. Neural network (MLP) predicts priority scores
+3. Use learned priorities in PIBT execution
+
+**Implementation**:
+- Network: 3-layer MLP (6→32→16→1 per agent)
+- Training: Imitation learning from expert demonstrations
+- Features: position, goal, distance, agent density (6 dimensions)
+
+**When to use**:
+- **Experimental feature** - currently in research phase
+- Requires pre-trained model (`models/priority_network.pth`)
+- May not provide immediate improvements
+
+**Parameters**:
+```python
+enable_priority_learning: bool = False
+priority_model_path: str = "models/priority_network.pth"
+```
+
+**Training**:
+```bash
+# Train priority network (50+ scenarios recommended)
+uv run python train_priority_network.py
+```
+
+**Current Status**:
+- ⚠️ **No improvement observed** in initial testing (56 → 68 steps)
+- Inference overhead: ~1ms per step
+- Requires further research:
+  - More training data (1000+ scenarios)
+  - Better feature engineering (add velocity, conflicts)
+  - Advanced architectures (GNN, attention)
+
+**Future Directions**:
+1. Graph Neural Networks for agent-agent interactions
+2. Reinforcement Learning instead of imitation learning
+3. Online learning during execution
+4. Transfer learning from MAPF-GPT
+
+**Trade-off**: Requires training time and PyTorch dependency. Currently experimental with no proven benefits.
+
+### 6. Priority Increment Tuning
 
 **What it does**: Controls how aggressively agent priorities increase when they fail to reach goals.
 

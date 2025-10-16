@@ -121,7 +121,13 @@ print(f"Solution: {len(plan)} timesteps")
    - **+19.7% improvement** with 400 agents
    - Best synergy with Hindrance Term
 
-5. **Hyperparameter Optimization**
+5. **Priority Learning** (2025 Research) 🔬 EXPERIMENTAL
+   - Lightweight neural network for priority prediction
+   - Imitation learning from expert demonstrations
+   - Currently in research phase (no proven improvements yet)
+   - Requires PyTorch and model training
+
+6. **Hyperparameter Optimization**
    - Optuna integration for automatic tuning
    - Environment-specific parameter adaptation
 

@@ -24,6 +24,8 @@ class PIBT:
         lns_iterations: int = 10,
         lns_destroy_size: int = 10,
         lns_destroy_strategy: str = "adaptive",
+        enable_priority_learning: bool = False,
+        priority_model_path: str | None = None,
     ):
         self.grid = grid
         self.starts = starts
@@ -64,6 +66,20 @@ class PIBT:
         self.lns_iterations = lns_iterations
         self.lns_destroy_size = lns_destroy_size
         self.lns_destroy_strategy = lns_destroy_strategy
+
+        # Priority Learning parameters (2025 optimization)
+        self.enable_priority_learning = enable_priority_learning
+        self.priority_model_path = priority_model_path
+        self.priority_model = None
+
+        # Load priority model if enabled
+        if self.enable_priority_learning and priority_model_path is not None:
+            try:
+                from .priority_net import load_model
+                self.priority_model = load_model(priority_model_path)
+            except Exception as e:
+                print(f"Warning: Failed to load priority model from {priority_model_path}: {e}")
+                self.enable_priority_learning = False
 
     def compute_hindrance(self, v: Coord, Q_from: Config, current_agent: int) -> float:
         """
@@ -249,9 +265,14 @@ class PIBT:
     def _run_single(self, max_timestep: int) -> Configs:
         """Single PIBT execution without regret learning."""
         # define priorities
-        priorities: list[float] = []
-        for i in range(self.N):
-            priorities.append(self.dist_tables[i].get(self.starts[i]) / self.grid.size)
+        if self.enable_priority_learning and self.priority_model is not None:
+            # Use learned priorities
+            priorities = self._get_learned_priorities(self.starts)
+        else:
+            # Use default distance-based priorities
+            priorities: list[float] = []
+            for i in range(self.N):
+                priorities.append(self.dist_tables[i].get(self.starts[i]) / self.grid.size)
 
         # main loop, generate sequence of configurations
         configs = [self.starts]
@@ -272,6 +293,29 @@ class PIBT:
                 break  # goal
 
         return configs
+
+    def _get_learned_priorities(self, config: Config) -> list[float]:
+        """
+        Get learned priorities from neural network.
+
+        Args:
+            config: Current configuration
+
+        Returns:
+            List of priority scores for each agent
+        """
+        from .priority_trainer import extract_features_from_config
+
+        # Extract features
+        features = extract_features_from_config(self, config, self.grid)
+
+        # Predict priorities
+        priorities_np = self.priority_model.predict(features)
+
+        # Convert to list and normalize to reasonable range
+        priorities = priorities_np.tolist()
+
+        return priorities
 
     def _run_with_regret_learning(self, max_timestep: int) -> Configs:
         """
