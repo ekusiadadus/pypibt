@@ -1,0 +1,179 @@
+====================================================================================================
+PHASE 1-7 COMPREHENSIVE COMPARISON BENCHMARK
+====================================================================================================
+
+
+====================================================================================================
+Test Configuration: Small (50 agents)
+====================================================================================================
+
+  [Phase 1] Baseline PIBT                 ...   59 steps | SoC=  1146 | MS=  53 | Conflicts=  0 |   0.12s
+  [Phase 3a] Hindrance Heuristic           ...   60 steps | SoC=  1140 | MS=  53 | Conflicts=  0 |   0.05s
+  [Phase 3b] Regret Learning               ...   54 steps | SoC=  1147 | MS=  53 | Conflicts=  0 |   0.08s
+  [Phase 3c] Hindrance + Regret            ...   55 steps | SoC=  1152 | MS=  53 | Conflicts=  0 |   0.12s
+  [Phase 3d] Optuna Best                   ...   57 steps | SoC=  1142 | MS=  53 | Conflicts=  0 |   0.05s
+  [Phase 4] Anytime PIBT                  ... Anytime PIBT: Initial solution = 60 steps
+Anytime PIBT: Improved to 57 steps (iteration 1, 0.053s)
+Anytime PIBT: Improved to 54 steps (iteration 1, 0.053s)
+Anytime PIBT: Completed in 34 iterations, 2 improvements
+  54 steps | SoC=  1158 | MS=  53 | Conflicts=  0 |   5.15s
+  [Phase 5] LNS (Adaptive)                ... LNS: Initial solution = 60 steps, 0 conflicts
+LNS: Initial solution is conflict-free!
+  60 steps | SoC=  1140 | MS=  53 | Conflicts=  0 |   0.05s
+
+  Summary:
+    Baseline: 59 steps, SoC=1146
+    Phase 3a   (Hindrance Heuristic           ):   60 steps (-1.7%), SoC=  1140 (+0.5%), 0.05s
+    Phase 3b   (Regret Learning               ):   54 steps (+8.5%), SoC=  1147 (-0.1%), 0.08s
+    Phase 3c   (Hindrance + Regret            ):   55 steps (+6.8%), SoC=  1152 (-0.5%), 0.12s
+    Phase 3d   (Optuna Best                   ):   57 steps (+3.4%), SoC=  1142 (+0.3%), 0.05s
+    Phase 4    (Anytime PIBT                  ):   54 steps (+8.5%), SoC=  1158 (-1.0%), 5.15s
+    Phase 5    (LNS (Adaptive)                ):   60 steps (-1.7%), SoC=  1140 (+0.5%), 0.05s
+
+====================================================================================================
+Test Configuration: Medium (100 agents)
+====================================================================================================
+
+  [Phase 1] Baseline PIBT                 ...   63 steps | SoC=  2490 | MS=  53 | Conflicts=  0 |   0.09s
+  [Phase 3a] Hindrance Heuristic           ...   56 steps | SoC=  2435 | MS=  53 | Conflicts=  0 |   0.11s
+  [Phase 3b] Regret Learning               ...   55 steps | SoC=  2497 | MS=  53 | Conflicts=  0 |   0.18s
+  [Phase 3c] Hindrance + Regret            ...   55 steps | SoC=  2425 | MS=  53 | Conflicts=  0 |   0.24s
+  [Phase 3d] Optuna Best                   ...   56 steps | SoC=  2453 | MS=  53 | Conflicts=  0 |   0.11s
+  [Phase 4] Anytime PIBT                  ... Anytime PIBT: Initial solution = 56 steps
+Anytime PIBT: Improved to 54 steps (iteration 2, 0.429s)
+Anytime PIBT: Completed in 14 iterations, 1 improvements
+  54 steps | SoC=  2468 | MS=  53 | Conflicts=  0 |   5.04s
+  [Phase 5] LNS (Adaptive)                ... LNS: Initial solution = 56 steps, 0 conflicts
+LNS: Initial solution is conflict-free!
+  56 steps | SoC=  2435 | MS=  53 | Conflicts=  0 |   0.12s
+
+  Summary:
+    Baseline: 63 steps, SoC=2490
+    Phase 3a   (Hindrance Heuristic           ):   56 steps (+11.1%), SoC=  2435 (+2.2%), 0.11s
+    Phase 3b   (Regret Learning               ):   55 steps (+12.7%), SoC=  2497 (-0.3%), 0.18s
+    Phase 3c   (Hindrance + Regret            ):   55 steps (+12.7%), SoC=  2425 (+2.6%), 0.24s
+    Phase 3d   (Optuna Best                   ):   56 steps (+11.1%), SoC=  2453 (+1.5%), 0.11s
+    Phase 4    (Anytime PIBT                  ):   54 steps (+14.3%), SoC=  2468 (+0.9%), 5.04s
+    Phase 5    (LNS (Adaptive)                ):   56 steps (+11.1%), SoC=  2435 (+2.2%), 0.12s
+
+====================================================================================================
+Test Configuration: Large (200 agents)
+====================================================================================================
+
+  [Phase 1] Baseline PIBT                 ...   54 steps | SoC=  5100 | MS=  53 | Conflicts=  0 |   0.16s
+  [Phase 3a] Hindrance Heuristic           ...   60 steps | SoC=  5001 | MS=  53 | Conflicts=  0 |   0.25s
+  [Phase 3b] Regret Learning               ...   54 steps | SoC=  5100 | MS=  53 | Conflicts=  0 |   0.37s
+  [Phase 3c] Hindrance + Regret            ...   55 steps | SoC=  4914 | MS=  53 | Conflicts=  0 |   0.56s
+  [Phase 3d] Optuna Best                   ...   57 steps | SoC=  4909 | MS=  53 | Conflicts=  0 |   0.24s
+  [Phase 4] Anytime PIBT                  ... Anytime PIBT: Initial solution = 60 steps
+Anytime PIBT: Improved to 55 steps (iteration 1, 0.247s)
+Anytime PIBT: Improved to 54 steps (iteration 4, 2.650s)
+Anytime PIBT: Completed in 6 iterations, 2 improvements
+  54 steps | SoC=  4945 | MS=  53 | Conflicts=  0 |   5.06s
+  [Phase 5] LNS (Adaptive)                ... LNS: Initial solution = 60 steps, 0 conflicts
+LNS: Initial solution is conflict-free!
+  60 steps | SoC=  5001 | MS=  53 | Conflicts=  0 |   0.27s
+
+  Summary:
+    Baseline: 54 steps, SoC=5100
+    Phase 3a   (Hindrance Heuristic           ):   60 steps (-11.1%), SoC=  5001 (+1.9%), 0.25s
+    Phase 3b   (Regret Learning               ):   54 steps (+0.0%), SoC=  5100 (+0.0%), 0.37s
+    Phase 3c   (Hindrance + Regret            ):   55 steps (-1.9%), SoC=  4914 (+3.6%), 0.56s
+    Phase 3d   (Optuna Best                   ):   57 steps (-5.6%), SoC=  4909 (+3.7%), 0.24s
+    Phase 4    (Anytime PIBT                  ):   54 steps (+0.0%), SoC=  4945 (+3.0%), 5.06s
+    Phase 5    (LNS (Adaptive)                ):   60 steps (-11.1%), SoC=  5001 (+1.9%), 0.27s
+
+====================================================================================================
+Test Configuration: Very Large (400 agents)
+====================================================================================================
+
+  [Phase 1] Baseline PIBT                 ...   76 steps | SoC= 12899 | MS=  73 | Conflicts=  0 |   0.39s
+  [Phase 3a] Hindrance Heuristic           ...   70 steps | SoC= 11798 | MS=  64 | Conflicts=  0 |   0.61s
+  [Phase 3b] Regret Learning               ...   68 steps | SoC= 12598 | MS=  62 | Conflicts=  0 |   1.01s
+  [Phase 3c] Hindrance + Regret            ...   61 steps | SoC= 11721 | MS=  57 | Conflicts=  0 |   1.62s
+  [Phase 3d] Optuna Best                   ...   62 steps | SoC= 11695 | MS=  60 | Conflicts=  0 |   0.60s
+  [Phase 4] Anytime PIBT                  ... Anytime PIBT: Initial solution = 70 steps
+Anytime PIBT: Improved to 61 steps (iteration 1, 0.612s)
+Anytime PIBT: Completed in 1 iterations, 1 improvements
+  61 steps | SoC= 11824 | MS=  58 | Conflicts=  0 |  13.98s
+  [Phase 5] LNS (Adaptive)                ... LNS: Initial solution = 70 steps, 0 conflicts
+LNS: Initial solution is conflict-free!
+  70 steps | SoC= 11798 | MS=  64 | Conflicts=  0 |   0.74s
+
+  Summary:
+    Baseline: 76 steps, SoC=12899
+    Phase 3a   (Hindrance Heuristic           ):   70 steps (+7.9%), SoC= 11798 (+8.5%), 0.61s
+    Phase 3b   (Regret Learning               ):   68 steps (+10.5%), SoC= 12598 (+2.3%), 1.01s
+    Phase 3c   (Hindrance + Regret            ):   61 steps (+19.7%), SoC= 11721 (+9.1%), 1.62s
+    Phase 3d   (Optuna Best                   ):   62 steps (+18.4%), SoC= 11695 (+9.3%), 0.60s
+    Phase 4    (Anytime PIBT                  ):   61 steps (+19.7%), SoC= 11824 (+8.3%), 13.98s
+    Phase 5    (LNS (Adaptive)                ):   70 steps (+7.9%), SoC= 11798 (+8.5%), 0.74s
+
+====================================================================================================
+OVERALL SUMMARY: BEST PERFORMANCE BY PHASE
+====================================================================================================
+
+Small (50 agents):
+  Best Timesteps (Makespan): Regret Learning
+    54 steps
+    +8.5% vs baseline
+
+  Best Sum of Costs: Hindrance Heuristic
+    SoC = 1140
+    +0.5% vs baseline
+
+  Fewest Conflicts: Baseline PIBT
+    0 conflicts
+
+  Fastest Execution: Hindrance Heuristic
+    0.05s
+
+Medium (100 agents):
+  Best Timesteps (Makespan): Anytime PIBT
+    54 steps
+    +14.3% vs baseline
+
+  Best Sum of Costs: Hindrance + Regret
+    SoC = 2425
+    +2.6% vs baseline
+
+  Fewest Conflicts: Baseline PIBT
+    0 conflicts
+
+  Fastest Execution: Baseline PIBT
+    0.09s
+
+Large (200 agents):
+  Best Timesteps (Makespan): Baseline PIBT
+    54 steps
+    +0.0% vs baseline
+
+  Best Sum of Costs: Optuna Best
+    SoC = 4909
+    +3.7% vs baseline
+
+  Fewest Conflicts: Baseline PIBT
+    0 conflicts
+
+  Fastest Execution: Baseline PIBT
+    0.16s
+
+Very Large (400 agents):
+  Best Timesteps (Makespan): Hindrance + Regret
+    61 steps
+    +19.7% vs baseline
+
+  Best Sum of Costs: Optuna Best
+    SoC = 11695
+    +9.3% vs baseline
+
+  Fewest Conflicts: Baseline PIBT
+    0 conflicts
+
+  Fastest Execution: Baseline PIBT
+    0.39s
+
+
+Results saved to: benchmark_phase_comparison_results.json
+
+Benchmark complete!

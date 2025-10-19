@@ -1,0 +1,318 @@
+{
+  "Small (50 agents)": [
+    {
+      "phase": "Phase 1",
+      "name": "Baseline PIBT",
+      "description": "Original PIBT with distance-based priorities",
+      "success": true,
+      "timesteps": 59,
+      "makespan": 53,
+      "sum_of_costs": 1146,
+      "execution_time": 0.1169438362121582,
+      "conflicts": 0
+    },
+    {
+      "phase": "Phase 3a",
+      "name": "Hindrance Heuristic",
+      "description": "PIBT + Hindrance term (2025 lightweight optimization)",
+      "success": true,
+      "timesteps": 60,
+      "makespan": 53,
+      "sum_of_costs": 1140,
+      "execution_time": 0.05195116996765137,
+      "conflicts": 0
+    },
+    {
+      "phase": "Phase 3b",
+      "name": "Regret Learning",
+      "description": "PIBT + Regret Learning (iterative improvement)",
+      "success": true,
+      "timesteps": 54,
+      "makespan": 53,
+      "sum_of_costs": 1147,
+      "execution_time": 0.0794830322265625,
+      "conflicts": 0
+    },
+    {
+      "phase": "Phase 3c",
+      "name": "Hindrance + Regret",
+      "description": "PIBT + Hindrance + Regret Learning (combined)",
+      "success": true,
+      "timesteps": 55,
+      "makespan": 53,
+      "sum_of_costs": 1152,
+      "execution_time": 0.12165021896362305,
+      "conflicts": 0
+    },
+    {
+      "phase": "Phase 3d",
+      "name": "Optuna Best",
+      "description": "Hindrance with Optuna-tuned hyperparameters",
+      "success": true,
+      "timesteps": 57,
+      "makespan": 53,
+      "sum_of_costs": 1142,
+      "execution_time": 0.05405592918395996,
+      "conflicts": 0
+    },
+    {
+      "phase": "Phase 4",
+      "name": "Anytime PIBT",
+      "description": "Continuous improvement with beam search (time-limited)",
+      "success": true,
+      "timesteps": 54,
+      "makespan": 53,
+      "sum_of_costs": 1158,
+      "execution_time": 5.146338939666748,
+      "conflicts": 0
+    },
+    {
+      "phase": "Phase 5",
+      "name": "LNS (Adaptive)",
+      "description": "Large Neighborhood Search with adaptive destroy",
+      "success": true,
+      "timesteps": 60,
+      "makespan": 53,
+      "sum_of_costs": 1140,
+      "execution_time": 0.05490517616271973,
+      "conflicts": 0
+    }
+  ],
+  "Medium (100 agents)": [
+    {
+      "phase": "Phase 1",
+      "name": "Baseline PIBT",
+      "description": "Original PIBT with distance-based priorities",
+      "success": true,
+      "timesteps": 63,
+      "makespan": 53,
+      "sum_of_costs": 2490,
+      "execution_time": 0.08520102500915527,
+      "conflicts": 0
+    },
+    {
+      "phase": "Phase 3a",
+      "name": "Hindrance Heuristic",
+      "description": "PIBT + Hindrance term (2025 lightweight optimization)",
+      "success": true,
+      "timesteps": 56,
+      "makespan": 53,
+      "sum_of_costs": 2435,
+      "execution_time": 0.1085822582244873,
+      "conflicts": 0
+    },
+    {
+      "phase": "Phase 3b",
+      "name": "Regret Learning",
+      "description": "PIBT + Regret Learning (iterative improvement)",
+      "success": true,
+      "timesteps": 55,
+      "makespan": 53,
+      "sum_of_costs": 2497,
+      "execution_time": 0.17522716522216797,
+      "conflicts": 0
+    },
+    {
+      "phase": "Phase 3c",
+      "name": "Hindrance + Regret",
+      "description": "PIBT + Hindrance + Regret Learning (combined)",
+      "success": true,
+      "timesteps": 55,
+      "makespan": 53,
+      "sum_of_costs": 2425,
+      "execution_time": 0.24168133735656738,
+      "conflicts": 0
+    },
+    {
+      "phase": "Phase 3d",
+      "name": "Optuna Best",
+      "description": "Hindrance with Optuna-tuned hyperparameters",
+      "success": true,
+      "timesteps": 56,
+      "makespan": 53,
+      "sum_of_costs": 2453,
+      "execution_time": 0.10818004608154297,
+      "conflicts": 0
+    },
+    {
+      "phase": "Phase 4",
+      "name": "Anytime PIBT",
+      "description": "Continuous improvement with beam search (time-limited)",
+      "success": true,
+      "timesteps": 54,
+      "makespan": 53,
+      "sum_of_costs": 2468,
+      "execution_time": 5.04448676109314,
+      "conflicts": 0
+    },
+    {
+      "phase": "Phase 5",
+      "name": "LNS (Adaptive)",
+      "description": "Large Neighborhood Search with adaptive destroy",
+      "success": true,
+      "timesteps": 56,
+      "makespan": 53,
+      "sum_of_costs": 2435,
+      "execution_time": 0.11813092231750488,
+      "conflicts": 0
+    }
+  ],
+  "Large (200 agents)": [
+    {
+      "phase": "Phase 1",
+      "name": "Baseline PIBT",
+      "description": "Original PIBT with distance-based priorities",
+      "success": true,
+      "timesteps": 54,
+      "makespan": 53,
+      "sum_of_costs": 5100,
+      "execution_time": 0.1620950698852539,
+      "conflicts": 0
+    },
+    {
+      "phase": "Phase 3a",
+      "name": "Hindrance Heuristic",
+      "description": "PIBT + Hindrance term (2025 lightweight optimization)",
+      "success": true,
+      "timesteps": 60,
+      "makespan": 53,
+      "sum_of_costs": 5001,
+      "execution_time": 0.2482140064239502,
+      "conflicts": 0
+    },
+    {
+      "phase": "Phase 3b",
+      "name": "Regret Learning",
+      "description": "PIBT + Regret Learning (iterative improvement)",
+      "success": true,
+      "timesteps": 54,
+      "makespan": 53,
+      "sum_of_costs": 5100,
+      "execution_time": 0.36792898178100586,
+      "conflicts": 0
+    },
+    {
+      "phase": "Phase 3c",
+      "name": "Hindrance + Regret",
+      "description": "PIBT + Hindrance + Regret Learning (combined)",
+      "success": true,
+      "timesteps": 55,
+      "makespan": 53,
+      "sum_of_costs": 4914,
+      "execution_time": 0.5614910125732422,
+      "conflicts": 0
+    },
+    {
+      "phase": "Phase 3d",
+      "name": "Optuna Best",
+      "description": "Hindrance with Optuna-tuned hyperparameters",
+      "success": true,
+      "timesteps": 57,
+      "makespan": 53,
+      "sum_of_costs": 4909,
+      "execution_time": 0.23889422416687012,
+      "conflicts": 0
+    },
+    {
+      "phase": "Phase 4",
+      "name": "Anytime PIBT",
+      "description": "Continuous improvement with beam search (time-limited)",
+      "success": true,
+      "timesteps": 54,
+      "makespan": 53,
+      "sum_of_costs": 4945,
+      "execution_time": 5.0572509765625,
+      "conflicts": 0
+    },
+    {
+      "phase": "Phase 5",
+      "name": "LNS (Adaptive)",
+      "description": "Large Neighborhood Search with adaptive destroy",
+      "success": true,
+      "timesteps": 60,
+      "makespan": 53,
+      "sum_of_costs": 5001,
+      "execution_time": 0.27040839195251465,
+      "conflicts": 0
+    }
+  ],
+  "Very Large (400 agents)": [
+    {
+      "phase": "Phase 1",
+      "name": "Baseline PIBT",
+      "description": "Original PIBT with distance-based priorities",
+      "success": true,
+      "timesteps": 76,
+      "makespan": 73,
+      "sum_of_costs": 12899,
+      "execution_time": 0.3898599147796631,
+      "conflicts": 0
+    },
+    {
+      "phase": "Phase 3a",
+      "name": "Hindrance Heuristic",
+      "description": "PIBT + Hindrance term (2025 lightweight optimization)",
+      "success": true,
+      "timesteps": 70,
+      "makespan": 64,
+      "sum_of_costs": 11798,
+      "execution_time": 0.6058979034423828,
+      "conflicts": 0
+    },
+    {
+      "phase": "Phase 3b",
+      "name": "Regret Learning",
+      "description": "PIBT + Regret Learning (iterative improvement)",
+      "success": true,
+      "timesteps": 68,
+      "makespan": 62,
+      "sum_of_costs": 12598,
+      "execution_time": 1.008768081665039,
+      "conflicts": 0
+    },
+    {
+      "phase": "Phase 3c",
+      "name": "Hindrance + Regret",
+      "description": "PIBT + Hindrance + Regret Learning (combined)",
+      "success": true,
+      "timesteps": 61,
+      "makespan": 57,
+      "sum_of_costs": 11721,
+      "execution_time": 1.6166000366210938,
+      "conflicts": 0
+    },
+    {
+      "phase": "Phase 3d",
+      "name": "Optuna Best",
+      "description": "Hindrance with Optuna-tuned hyperparameters",
+      "success": true,
+      "timesteps": 62,
+      "makespan": 60,
+      "sum_of_costs": 11695,
+      "execution_time": 0.6046788692474365,
+      "conflicts": 0
+    },
+    {
+      "phase": "Phase 4",
+      "name": "Anytime PIBT",
+      "description": "Continuous improvement with beam search (time-limited)",
+      "success": true,
+      "timesteps": 61,
+      "makespan": 58,
+      "sum_of_costs": 11824,
+      "execution_time": 13.982151985168457,
+      "conflicts": 0
+    },
+    {
+      "phase": "Phase 5",
+      "name": "LNS (Adaptive)",
+      "description": "Large Neighborhood Search with adaptive destroy",
+      "success": true,
+      "timesteps": 70,
+      "makespan": 64,
+      "sum_of_costs": 11798,
+      "execution_time": 0.7389070987701416,
+      "conflicts": 0
+    }
+  ]
+}
