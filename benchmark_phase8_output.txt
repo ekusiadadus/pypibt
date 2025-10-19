@@ -1,0 +1,137 @@
+====================================================================================================
+PHASE 8 OPTIMIZATION BENCHMARK
+====================================================================================================
+
+Testing:
+  - Phase 8A: MCTS-Enhanced PIBT (high performance, 2-5s)
+  - Phase 8B: Adaptive Diverse Beam Search (balanced, 1-3s)
+  - Phase 8C: JPS-Accelerated DistTable (init speedup, sparse graphs)
+
+Comparing against:
+  - Phase 1: Baseline PIBT
+  - Phase 3d: Optuna Best (current best lightweight)
+
+
+====================================================================================================
+Test Configuration: Small (50 agents)
+====================================================================================================
+
+  [Phase 1] Baseline PIBT                      ...   59 steps | SoC=  1146 | MS=  53 | Conflicts=  0 |   0.10s
+  [Phase 3d] Optuna Best (Best Lightweight)     ...   57 steps | SoC=  1142 | MS=  53 | Conflicts=  0 |   0.05s
+  [Phase 8A] MCTS-Enhanced PIBT                 ... MCTS-PIBT: Starting with 250 rollouts
+MCTS-PIBT: Iteration 50, found solution with 2001 steps (0.82s, 50 tree visits)
+MCTS-PIBT: Time limit reached (5.01s)
+MCTS-PIBT: Completed 228 rollouts, final cost = 2001 steps, tree size = 228 nodes
+2001 steps | SoC=  1153 | MS=  53 | Conflicts=  0 |   5.33s
+  [Phase 8B] Adaptive Beam Search               ... Adaptive Beam PIBT: Starting with beam_width=5
+Adaptive Beam PIBT: Initial best = 54 steps
+Adaptive Beam PIBT: No improvements, terminating early
+Adaptive Beam PIBT: Completed 4 iterations, 0 improvements, final cost = 54 steps
+  54 steps | SoC=  1147 | MS=  53 | Conflicts=  0 |   1.15s
+  [Phase 8C] JPS-Accelerated DistTable          ...       DistTable init: Standard=0.0001s, JPS=0.0017s (-2217.6% speedup)
+  57 steps | SoC=  1142 | MS=  53 | Conflicts=  0 |   0.11s
+
+  Summary:
+    Baseline: 59 steps, SoC=1146
+    Phase 3d   (Optuna Best (Best Lightweight)     ):   57 steps (+3.4%), SoC=  1142 (+0.3%), 0.05s
+    Phase 8A   (MCTS-Enhanced PIBT                 ): 2001 steps (-3291.5%), SoC=  1153 (-0.6%), 5.33s
+    Phase 8B   (Adaptive Beam Search               ):   54 steps (+8.5%), SoC=  1147 (-0.1%), 1.15s
+    Phase 8C   (JPS-Accelerated DistTable          ):   57 steps (+3.4%), SoC=  1142 (+0.3%), 0.11s
+
+====================================================================================================
+Test Configuration: Medium (100 agents)
+====================================================================================================
+
+  [Phase 1] Baseline PIBT                      ...   63 steps | SoC=  2490 | MS=  53 | Conflicts=  0 |   0.08s
+  [Phase 3d] Optuna Best (Best Lightweight)     ...   56 steps | SoC=  2453 | MS=  53 | Conflicts=  0 |   0.11s
+  [Phase 8A] MCTS-Enhanced PIBT                 ... MCTS-PIBT: Starting with 250 rollouts
+MCTS-PIBT: Iteration 50, found solution with 2001 steps (1.64s, 50 tree visits)
+MCTS-PIBT: Time limit reached (5.02s)
+MCTS-PIBT: Completed 110 rollouts, final cost = 2001 steps, tree size = 110 nodes
+2001 steps | SoC=  2462 | MS=  53 | Conflicts=  0 |   5.69s
+  [Phase 8B] Adaptive Beam Search               ... Adaptive Beam PIBT: Starting with beam_width=5
+Adaptive Beam PIBT: Initial best = 55 steps
+Adaptive Beam PIBT: Improved to 54 steps (iteration 1, 0.15s, beam=6)
+Adaptive Beam PIBT: Time limit reached (3.03s)
+Adaptive Beam PIBT: Completed 6 iterations, 1 improvements, final cost = 54 steps
+  54 steps | SoC=  2479 | MS=  53 | Conflicts=  0 |   3.03s
+  [Phase 8C] JPS-Accelerated DistTable          ...       DistTable init: Standard=0.0001s, JPS=0.0005s (-309.8% speedup)
+  56 steps | SoC=  2453 | MS=  53 | Conflicts=  0 |   0.22s
+
+  Summary:
+    Baseline: 63 steps, SoC=2490
+    Phase 3d   (Optuna Best (Best Lightweight)     ):   56 steps (+11.1%), SoC=  2453 (+1.5%), 0.11s
+    Phase 8A   (MCTS-Enhanced PIBT                 ): 2001 steps (-3076.2%), SoC=  2462 (+1.1%), 5.69s
+    Phase 8B   (Adaptive Beam Search               ):   54 steps (+14.3%), SoC=  2479 (+0.4%), 3.03s
+    Phase 8C   (JPS-Accelerated DistTable          ):   56 steps (+11.1%), SoC=  2453 (+1.5%), 0.22s
+
+====================================================================================================
+Test Configuration: Large (200 agents)
+====================================================================================================
+
+  [Phase 1] Baseline PIBT                      ...   54 steps | SoC=  5100 | MS=  53 | Conflicts=  0 |   0.16s
+  [Phase 3d] Optuna Best (Best Lightweight)     ...   57 steps | SoC=  4909 | MS=  53 | Conflicts=  0 |   0.24s
+  [Phase 8A] MCTS-Enhanced PIBT                 ... MCTS-PIBT: Starting with 250 rollouts
+MCTS-PIBT: Iteration 50, found solution with 2001 steps (3.37s, 50 tree visits)
+MCTS-PIBT: Time limit reached (5.03s)
+MCTS-PIBT: Completed 54 rollouts, final cost = 2001 steps, tree size = 54 nodes
+2001 steps | SoC=  5132 | MS=  53 | Conflicts=  0 |   6.37s
+  [Phase 8B] Adaptive Beam Search               ... Adaptive Beam PIBT: Starting with beam_width=5
+Adaptive Beam PIBT: Initial best = 54 steps
+Adaptive Beam PIBT: Time limit reached (3.40s)
+Adaptive Beam PIBT: Completed 3 iterations, 0 improvements, final cost = 54 steps
+  54 steps | SoC=  5100 | MS=  53 | Conflicts=  0 |   3.41s
+  [Phase 8C] JPS-Accelerated DistTable          ...       DistTable init: Standard=0.0003s, JPS=0.0009s (-234.2% speedup)
+  57 steps | SoC=  4909 | MS=  53 | Conflicts=  0 |   0.45s
+
+  Summary:
+    Baseline: 54 steps, SoC=5100
+    Phase 3d   (Optuna Best (Best Lightweight)     ):   57 steps (-5.6%), SoC=  4909 (+3.7%), 0.24s
+    Phase 8A   (MCTS-Enhanced PIBT                 ): 2001 steps (-3605.6%), SoC=  5132 (-0.6%), 6.37s
+    Phase 8B   (Adaptive Beam Search               ):   54 steps (+0.0%), SoC=  5100 (+0.0%), 3.41s
+    Phase 8C   (JPS-Accelerated DistTable          ):   57 steps (-5.6%), SoC=  4909 (+3.7%), 0.45s
+
+====================================================================================================
+OVERALL SUMMARY: PHASE 8 PERFORMANCE
+====================================================================================================
+
+Small (50 agents):
+  Best Timesteps: Adaptive Beam Search
+    54 steps
+    +8.5% vs baseline
+
+  Best Sum of Costs: Optuna Best (Best Lightweight)
+    SoC = 1142
+    +0.3% vs baseline
+
+  Fastest Execution: Optuna Best (Best Lightweight)
+    0.05s
+
+Medium (100 agents):
+  Best Timesteps: Adaptive Beam Search
+    54 steps
+    +14.3% vs baseline
+
+  Best Sum of Costs: Optuna Best (Best Lightweight)
+    SoC = 2453
+    +1.5% vs baseline
+
+  Fastest Execution: Baseline PIBT
+    0.08s
+
+Large (200 agents):
+  Best Timesteps: Baseline PIBT
+    54 steps
+    +0.0% vs baseline
+
+  Best Sum of Costs: Optuna Best (Best Lightweight)
+    SoC = 4909
+    +3.7% vs baseline
+
+  Fastest Execution: Baseline PIBT
+    0.16s
+
+
+Results saved to: benchmark_phase8_results.json
+
+Phase 8 benchmark complete!

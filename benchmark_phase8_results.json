@@ -1,0 +1,158 @@
+{
+  "Small (50 agents)": [
+    {
+      "phase": "Phase 1",
+      "name": "Baseline PIBT",
+      "success": true,
+      "timesteps": 59,
+      "makespan": 53,
+      "sum_of_costs": 1146,
+      "execution_time": 0.10460805892944336,
+      "conflicts": 0
+    },
+    {
+      "phase": "Phase 3d",
+      "name": "Optuna Best (Best Lightweight)",
+      "success": true,
+      "timesteps": 57,
+      "makespan": 53,
+      "sum_of_costs": 1142,
+      "execution_time": 0.04975271224975586,
+      "conflicts": 0
+    },
+    {
+      "phase": "Phase 8A",
+      "name": "MCTS-Enhanced PIBT",
+      "success": true,
+      "timesteps": 2001,
+      "makespan": 53,
+      "sum_of_costs": 1153,
+      "execution_time": 5.325911998748779,
+      "conflicts": 0
+    },
+    {
+      "phase": "Phase 8B",
+      "name": "Adaptive Beam Search",
+      "success": true,
+      "timesteps": 54,
+      "makespan": 53,
+      "sum_of_costs": 1147,
+      "execution_time": 1.1516101360321045,
+      "conflicts": 0
+    },
+    {
+      "phase": "Phase 8C",
+      "name": "JPS-Accelerated DistTable",
+      "success": true,
+      "timesteps": 57,
+      "makespan": 53,
+      "sum_of_costs": 1142,
+      "execution_time": 0.10809588432312012,
+      "conflicts": 0
+    }
+  ],
+  "Medium (100 agents)": [
+    {
+      "phase": "Phase 1",
+      "name": "Baseline PIBT",
+      "success": true,
+      "timesteps": 63,
+      "makespan": 53,
+      "sum_of_costs": 2490,
+      "execution_time": 0.08452606201171875,
+      "conflicts": 0
+    },
+    {
+      "phase": "Phase 3d",
+      "name": "Optuna Best (Best Lightweight)",
+      "success": true,
+      "timesteps": 56,
+      "makespan": 53,
+      "sum_of_costs": 2453,
+      "execution_time": 0.10689210891723633,
+      "conflicts": 0
+    },
+    {
+      "phase": "Phase 8A",
+      "name": "MCTS-Enhanced PIBT",
+      "success": true,
+      "timesteps": 2001,
+      "makespan": 53,
+      "sum_of_costs": 2462,
+      "execution_time": 5.693259954452515,
+      "conflicts": 0
+    },
+    {
+      "phase": "Phase 8B",
+      "name": "Adaptive Beam Search",
+      "success": true,
+      "timesteps": 54,
+      "makespan": 53,
+      "sum_of_costs": 2479,
+      "execution_time": 3.028610944747925,
+      "conflicts": 0
+    },
+    {
+      "phase": "Phase 8C",
+      "name": "JPS-Accelerated DistTable",
+      "success": true,
+      "timesteps": 56,
+      "makespan": 53,
+      "sum_of_costs": 2453,
+      "execution_time": 0.22411012649536133,
+      "conflicts": 0
+    }
+  ],
+  "Large (200 agents)": [
+    {
+      "phase": "Phase 1",
+      "name": "Baseline PIBT",
+      "success": true,
+      "timesteps": 54,
+      "makespan": 53,
+      "sum_of_costs": 5100,
+      "execution_time": 0.16027212142944336,
+      "conflicts": 0
+    },
+    {
+      "phase": "Phase 3d",
+      "name": "Optuna Best (Best Lightweight)",
+      "success": true,
+      "timesteps": 57,
+      "makespan": 53,
+      "sum_of_costs": 4909,
+      "execution_time": 0.23534727096557617,
+      "conflicts": 0
+    },
+    {
+      "phase": "Phase 8A",
+      "name": "MCTS-Enhanced PIBT",
+      "success": true,
+      "timesteps": 2001,
+      "makespan": 53,
+      "sum_of_costs": 5132,
+      "execution_time": 6.365838289260864,
+      "conflicts": 0
+    },
+    {
+      "phase": "Phase 8B",
+      "name": "Adaptive Beam Search",
+      "success": true,
+      "timesteps": 54,
+      "makespan": 53,
+      "sum_of_costs": 5100,
+      "execution_time": 3.408148765563965,
+      "conflicts": 0
+    },
+    {
+      "phase": "Phase 8C",
+      "name": "JPS-Accelerated DistTable",
+      "success": true,
+      "timesteps": 57,
+      "makespan": 53,
+      "sum_of_costs": 4909,
+      "execution_time": 0.4529547691345215,
+      "conflicts": 0
+    }
+  ]
+}
