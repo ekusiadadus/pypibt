@@ -111,7 +111,7 @@ class MCTSPIBT:
         goals: Config,
         seed: int = 0,
         num_rollouts: int = 250,
-        rollout_depth: int = 100,
+        rollout_depth: int = 50,  # Reduced from 100 for efficiency
         exploration_weight: float = 1.414,
         time_limit_ms: float = 5000.0,
     ):
@@ -222,6 +222,8 @@ class MCTSPIBT:
         """
         Perform random rollout from node to estimate value.
 
+        Modified: Shorter rollouts with early termination for efficiency.
+
         Args:
             node: Starting node
             max_steps: Maximum rollout steps
@@ -232,24 +234,36 @@ class MCTSPIBT:
         config = node.config
         priorities = list(node.priorities)
 
+        # Count agents at goal initially
+        agents_at_goal = sum(1 for i in range(self.N) if config[i] == self.goals[i])
+        initial_at_goal = agents_at_goal
+
         for step in range(max_steps):
-            # Check if goal reached
-            if config == self.goals:
-                # Return negative cost (we maximize, so lower cost = higher value)
-                return -float(step)
+            # Check if all agents reached goal
+            if agents_at_goal == self.N:
+                # Reward: negative cost + bonus for reaching goal
+                return -float(step) + 100.0
 
             # PIBT step
             config = self._run_pibt_single_step(config, priorities)
 
-            # Update priorities
+            # Update priorities and count progress
+            agents_at_goal = 0
             for i in range(self.N):
-                if config[i] != self.goals[i]:
-                    priorities[i] += 1.0
-                else:
+                if config[i] == self.goals[i]:
                     priorities[i] -= np.floor(priorities[i])
+                    agents_at_goal += 1
+                else:
+                    priorities[i] += 1.0
 
-        # Return negative of max_steps if didn't reach goal
-        return -float(max_steps)
+            # Early termination if no progress
+            if step > max_steps // 2 and agents_at_goal <= initial_at_goal:
+                # Penalize lack of progress
+                return -float(max_steps) - 50.0
+
+        # Partial credit based on agents at goal
+        progress_bonus = (agents_at_goal / self.N) * 50.0
+        return -float(max_steps) + progress_bonus
 
     def _expand(self, node: MCTSNode) -> MCTSNode:
         """
@@ -335,7 +349,9 @@ class MCTSPIBT:
 
     def _extract_solution_from_tree(self, root: MCTSNode, max_timestep: int) -> Configs:
         """
-        Extract best solution by following most visited children.
+        Extract best solution using learned priorities from MCTS.
+
+        Modified: Use best child's priorities instead of just executing from root.
 
         Args:
             root: Root node
@@ -344,9 +360,27 @@ class MCTSPIBT:
         Returns:
             Solution configurations
         """
-        configs = [root.config]
-        priorities = list(root.priorities)
-        current_config = root.config
+        # Find best path in tree (most visited or highest value)
+        best_priorities = list(root.priorities)
+
+        # If tree has children, use best child's priorities
+        if root.children:
+            # Select best child by value/visits ratio
+            best_child = max(
+                root.children,
+                key=lambda c: (c.value / c.visits if c.visits > 0 else float('-inf'))
+            )
+            best_priorities = list(best_child.priorities)
+
+        # Execute PIBT with learned best priorities
+        configs = [self.starts]  # Start from initial config
+        priorities = self._initialize_priorities(self.starts)
+
+        # Apply learned priority adjustments
+        for i in range(min(len(priorities), len(best_priorities))):
+            priorities[i] = best_priorities[i]
+
+        current_config = self.starts
 
         for _ in range(max_timestep):
             if current_config == self.goals:
